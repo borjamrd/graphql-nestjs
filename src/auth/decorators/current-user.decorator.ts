@@ -19,12 +19,13 @@ export const CurrentUser = createParamDecorator(
     }
     if (roles.length === 0) return user;
     for (const role of user.roles) {
-
       //todo! fix this
-      if (roles.includes(role as ValidRoles)) {
+      if (roles.includes(role)) {
         return user;
       }
     }
-    throw new ForbiddenException(`${user.fullName} is not allowd. Needs one of ${roles}`);
+    throw new ForbiddenException(
+      `${user.fullName} is not allowd. Needs one of ${roles}`,
+    );
   },
 );

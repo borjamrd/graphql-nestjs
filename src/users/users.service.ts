@@ -10,6 +10,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { ValidRoles } from 'src/auth/enum/valid-roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +31,15 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) {
+      return await this.usersRepository.find();
+    }
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   async findOneById(id: string): Promise<User> {
@@ -60,7 +68,9 @@ export class UsersService {
   }
 
   async block(id: string): Promise<User> {
-    throw new Error('Method not implemented.');
+    const userToBlock = await this.findOneById(id);
+    userToBlock.isActive = false;
+    return await this.usersRepository.save(userToBlock);
   }
 
   private handleDBError(error: any): never {
