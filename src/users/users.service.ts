@@ -17,7 +17,7 @@ export class UsersService {
   private logger = new Logger('UsersService');
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-  ) {}
+  ) { }
   async create(signupInput: SignUpInput): Promise<User> {
     try {
       const newUser = this.usersRepository.create({
@@ -32,14 +32,13 @@ export class UsersService {
   }
 
   async findAll(roles: ValidRoles[]): Promise<User[]> {
-    if (roles.length === 0) {
-      return await this.usersRepository.find();
-    }
-    return this.usersRepository
+    if (roles.length === 0) return await this.usersRepository.find();
+
+    return await this.usersRepository
       .createQueryBuilder('user')
       .andWhere('ARRAY[roles] && ARRAY[:...roles]')
       .setParameter('roles', roles)
-      .getMany();
+      .getMany()
   }
 
   async findOneById(id: string): Promise<User> {
@@ -63,13 +62,29 @@ export class UsersService {
     }
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(updateUserInput: UpdateUserInput, updatedby: User): Promise<User> {
+    try {
+      const userToUpdate = await this.usersRepository.preload({
+        id: updateUserInput.id,
+        ...updateUserInput,
+      })
+      userToUpdate.lastUpdatedBy = updatedby
+      return await this.usersRepository.save(userToUpdate);
+    } catch (error) {
+      this.handleDBError({
+        code: 'error_03',
+        detail: `User with key (id)=(${updateUserInput.id}) has not been updated`,
+      });
+    }
   }
 
-  async block(id: string): Promise<User> {
+  async block(id: string, userAdmin: User): Promise<User> {
     const userToBlock = await this.findOneById(id);
     userToBlock.isActive = false;
+    if (userToBlock.id === userAdmin.id) {
+      throw new BadRequestException('You cannot block yourself');
+    }
+    userToBlock.lastUpdatedBy = userAdmin
     return await this.usersRepository.save(userToBlock);
   }
 
@@ -77,7 +92,7 @@ export class UsersService {
     if (error.code === '23505') {
       throw new BadRequestException(
         'User already exists: ' +
-          JSON.stringify(error.detail.replace('Key ', ' ')),
+        JSON.stringify(error.detail.replace('Key ', ' ')),
       );
     }
     if (error.code === '23503') {
@@ -88,6 +103,11 @@ export class UsersService {
     if (error.code === 'error_01') {
       throw new BadRequestException(
         'User not found: ' + JSON.stringify(error.detail.replace('Key ', ' ')),
+      );
+    }
+    if (error.code === 'error_03') {
+      throw new BadRequestException(
+        'User not updated: ' + JSON.stringify(error.detail.replace('Key ', ' ')),
       );
     }
 

@@ -2,33 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Item {
-  id: ID!
-  name: String!
-  quantity: Int!
-  quantityUnits: String
-}
-
 type User {
   id: ID!
   fullName: String!
   email: String!
-  roles: [String!]!
+  roles: [ValidRoles!]!
   isActive: Boolean!
   lastUpdatedBy: User
-}
-
-type AuthResponse {
-  token: String!
-  user: User!
-}
-
-type Query {
   items: [Item!]!
-  item(id: ID!): Item!
-  users(roles: [ValidRoles!] = []): [User!]!
-  findOneUser(id: ID!): User!
-  revalidate: AuthResponse!
+  itemCount: Int!
 }
 
 """Valid roles for users"""
@@ -38,26 +20,39 @@ enum ValidRoles {
   superadmin
 }
 
+type Item {
+  id: ID!
+  name: String!
+  quantityUnits: String
+  user: User!
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
+
+type Query {
+  revalidate: AuthResponse!
+  users(roles: [ValidRoles!] = []): [User!]!
+  findOneUser(id: ID!): User!
+  items(offset: Int = 0, limit: Int = 10): [Item!]!
+  item(id: ID!): Item!
+}
+
 type Mutation {
+  signup(signupInput: SignUpInput!): AuthResponse!
+  login(loginInput: LoginInput!): AuthResponse!
+  blockUser(id: ID!): User!
+
+  """Update user data"""
+  updateUser(updateUserInput: UpdateUserInput!): User!
   createItem(createItemInput: CreateItemInput!): Item!
   updateItem(updateItemInput: UpdateItemInput!): Item!
   removeItem(id: ID!): Item!
-  blockUser(id: ID!): User!
-  signup(signupInput: SignUpInput!): AuthResponse!
-  login(loginInput: LoginInput!): AuthResponse!
-}
 
-input CreateItemInput {
-  name: String!
-  quantity: Float!
-  quantityUnits: String
-}
-
-input UpdateItemInput {
-  name: String
-  quantity: Float
-  quantityUnits: String
-  id: ID!
+  """Execute database seed"""
+  executeSeed: Boolean!
 }
 
 input SignUpInput {
@@ -69,4 +64,25 @@ input SignUpInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input UpdateUserInput {
+  email: String
+  fullName: String
+  password: String
+  id: ID!
+  roles: [ValidRoles!]
+  isActive: Boolean
+  test: String
+}
+
+input CreateItemInput {
+  name: String!
+  quantityUnits: String
+}
+
+input UpdateItemInput {
+  name: String
+  quantityUnits: String
+  id: ID!
 }
