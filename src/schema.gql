@@ -9,8 +9,10 @@ type User {
   roles: [ValidRoles!]!
   isActive: Boolean!
   lastUpdatedBy: User
-  items: [Item!]!
   itemCount: Int!
+  items(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
+  listCount: Int!
+  lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
 }
 
 """Valid roles for users"""
@@ -20,11 +22,18 @@ enum ValidRoles {
   superadmin
 }
 
+type List {
+  id: ID!
+  name: String!
+  user: User!
+}
+
 type Item {
   id: ID!
   name: String!
   quantityUnits: String
   user: User!
+  list: List
 }
 
 type AuthResponse {
@@ -36,8 +45,10 @@ type Query {
   revalidate: AuthResponse!
   users(roles: [ValidRoles!] = []): [User!]!
   findOneUser(id: ID!): User!
-  items(offset: Int = 0, limit: Int = 10): [Item!]!
+  items(offset: Int = 0, limit: Int = 10, search: String): [Item!]!
   item(id: ID!): Item!
+  lists(offset: Int = 0, limit: Int = 10, search: String): [List!]!
+  list(id: ID!): List!
 }
 
 type Mutation {
@@ -50,6 +61,9 @@ type Mutation {
   createItem(createItemInput: CreateItemInput!): Item!
   updateItem(updateItemInput: UpdateItemInput!): Item!
   removeItem(id: ID!): Item!
+  createList(createListInput: CreateListInput!): List!
+  updateList(updateListInput: UpdateListInput!): List!
+  removeList(id: ID!): List!
 
   """Execute database seed"""
   executeSeed: Boolean!
@@ -84,5 +98,14 @@ input CreateItemInput {
 input UpdateItemInput {
   name: String
   quantityUnits: String
+  id: ID!
+}
+
+input CreateListInput {
+  name: String!
+}
+
+input UpdateListInput {
+  name: String
   id: ID!
 }

@@ -8,7 +8,8 @@ import { CreateItemInput, UpdateItemInput } from './dto/input';
 import { Item } from './entities/item.entity';
 
 import { ItemsService } from './items.service';
-import { PaginationArgs } from 'src/common/dto/args/pagination.args';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
+
 
 @Resolver(() => Item)
 @UseGuards(JwtAuthGuard)
@@ -26,9 +27,11 @@ export class ItemsResolver {
   @Query(() => [Item], { name: 'items' })
   async findAll(
     @CurrentUser() user: User,
-    @Args() paginationArgs: PaginationArgs
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs
   ): Promise<Item[]> {
-    return this.itemsService.findAll(user, paginationArgs);
+
+    return this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 
   @Query(() => Item, { name: 'item' })
