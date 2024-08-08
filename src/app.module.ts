@@ -1,4 +1,4 @@
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloServerPluginLandingPageLocalDefault, ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -25,9 +25,9 @@ import { ListItemModule } from './list-item/list-item.module';
       inject: [JwtService],
       useFactory: async (jwtService: JwtService) => ({
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: true,
-        introspection: true,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        playground: false,
+        plugins: [
+          process.env.STATE === 'dev' ? ApolloServerPluginLandingPageLocalDefault() : ApolloServerPluginLandingPageProductionDefault()],
         context({ req }) {
           const token = req.headers.authorization?.replace('bearer ', '');
 
