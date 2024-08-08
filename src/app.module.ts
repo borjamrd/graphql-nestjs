@@ -39,6 +39,10 @@ import { ListItemModule } from './list-item/list-item.module';
       })
     }),
     TypeOrmModule.forRoot({
+      ssl: (process.env.STATE === 'prod') ? {
+        rejectUnauthorized: false,
+        sslmode: 'require',
+      } : false as any,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
@@ -59,4 +63,17 @@ import { ListItemModule } from './list-item/list-item.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {
+
+  constructor() {
+    console.log(process.env.STATE);
+    console.log(process.env.DB_HOST);
+    console.log(process.env.DB_PORT);
+    console.log(process.env.DB_USERNAME);
+    console.log(process.env.DB_PASSWORD);
+    console.log(process.env.DB_NAME)
+
+
+
+  }
+}
