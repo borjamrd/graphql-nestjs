@@ -3,7 +3,7 @@ export const SEED_USERS = [
         fullName: 'Fernando Herrera',
         email: 'fernando@google.com',
         password: '123456',
-        roles: ['admin','superUser','user'],
+        roles: ['admin', 'superUser', 'user'],
         isActive: true
     },
     {
@@ -540,3 +540,26 @@ export const SEED_ITEMS = [
     },
 ]
 
+
+export const SEED_LISTS = [
+    {
+        name: 'Lista de compras',
+        description: 'Lista de artículos para comprar en el supermercado',
+    },
+    {
+        name: 'Lista de limpieza',
+        description: 'Tareas de limpieza de la casa',
+    },
+    {
+        name: 'Lista de lavandería',
+        description: 'Tareas relacionadas con el lavado de ropa',
+    },
+    {
+        name: 'Lista de cocina',
+        description: 'Recetas y tareas de preparación de comidas',
+    },
+    {
+        name: 'Lista de mantenimiento',
+        description: 'Tareas de mantenimiento y reparación del hogar',
+    }
+];
