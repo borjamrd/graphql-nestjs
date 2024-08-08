@@ -27,9 +27,7 @@ import { ListItemModule } from './list-item/list-item.module';
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         playground: false,
         plugins: [
-          process.env.STATE === 'dev' ? ApolloServerPluginLandingPageLocalDefault() : ApolloServerPluginLandingPageProductionDefault({
-            embed: true,
-          } as any)],
+          process.env.STATE === 'dev' ? ApolloServerPluginLandingPageLocalDefault() : ApolloServerPluginLandingPageProductionDefault()],
         context({ req }) {
           const token = req.headers.authorization?.replace('bearer ', '');
 
