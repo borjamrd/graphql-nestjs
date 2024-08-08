@@ -1,6 +1,7 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Min } from 'class-validator';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { IsOptional, Min } from 'class-validator';
 import { Item } from 'src/items/entities/item.entity';
+import { ListItem } from 'src/list-item/entities/list-item.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -17,12 +18,18 @@ export class List {
   @Column()
   name: string
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Column({
+    nullable: true
+  })
+  description?: string
+
   @ManyToOne(() => User, (user) => user.lists, { nullable: false })
   @Index('userId-list-index')
   @Field(() => User, { nullable: false })
   user: User
 
-
-  @OneToMany(() => Item, item => item.list, { lazy: true, nullable: true })
-  items?: Item[]
+  @OneToMany(() => ListItem, listItem => listItem.list, { lazy: true })
+  listItem?: ListItem[]
 }
