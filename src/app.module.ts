@@ -25,7 +25,7 @@ import { ListItemModule } from './list-item/list-item.module';
       inject: [JwtService],
       useFactory: async (jwtService: JwtService) => ({
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: false,
+        playground: true,
         introspection: true,
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         context({ req }) {
