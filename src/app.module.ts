@@ -33,6 +33,8 @@ import { ListItemModule } from './list-item/list-item.module';
           if (!token) throw new Error('No token provided');
 
           const payload = jwtService.decode(token);
+          console.log(token)
+          console.log(payload);
           if (!payload) throw new Error('Token expired');
 
         }
@@ -63,17 +65,4 @@ import { ListItemModule } from './list-item/list-item.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-
-  constructor() {
-    console.log(process.env.STATE);
-    console.log(process.env.DB_HOST);
-    console.log(process.env.DB_PORT);
-    console.log(process.env.DB_USERNAME);
-    console.log(process.env.DB_PASSWORD);
-    console.log(process.env.DB_NAME)
-
-
-
-  }
-}
+export class AppModule { }
