@@ -26,6 +26,7 @@ import { ListItemModule } from './list-item/list-item.module';
       useFactory: async (jwtService: JwtService) => ({
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         playground: false,
+        introspection: true,
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         context({ req }) {
           const token = req.headers.authorization?.replace('bearer ', '');
@@ -33,8 +34,6 @@ import { ListItemModule } from './list-item/list-item.module';
           if (!token) throw new Error('No token provided');
 
           const payload = jwtService.decode(token);
-          console.log(token)
-          console.log(payload);
           if (!payload) throw new Error('Token expired');
 
         }
