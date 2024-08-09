@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { ValidRoles } from 'src/auth/enum/valid-roles.enum';
 
 @Injectable()

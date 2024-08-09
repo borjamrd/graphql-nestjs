@@ -6,7 +6,7 @@ import {
 import { LoginInput, SignUpInput } from './dto/inputs';
 import { AuthResponse } from './dto/types/auth-response.type';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 
@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   private getJwtToken(userId: string): string {
     return this.jwtService.sign({ id: userId });

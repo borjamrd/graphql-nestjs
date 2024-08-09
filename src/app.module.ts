@@ -27,7 +27,7 @@ import { UsersModule } from './users/users.module';
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         playground: false,
         plugins: [
-          process.env.STATE === 'dev' ? ApolloServerPluginLandingPageLocalDefault() : ApolloServerPluginLandingPageProductionDefault()],
+          process.env.STATE === 'prod' ? ApolloServerPluginLandingPageProductionDefault() : ApolloServerPluginLandingPageLocalDefault()],
         context({ req }) {
           const token = req.headers.authorization?.replace('bearer ', '');
 
@@ -64,4 +64,8 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {
+    console.log(process.env.STATE)
+  }
+}
